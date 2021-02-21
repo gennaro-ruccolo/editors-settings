@@ -1,0 +1,14 @@
+.cache
+.extension
+auto-save-list
+elpa
+etc
+transient
+var
+.dap-breakpoints
+.lsp-session-v1
+custom.el
+init.el.bck
+places
+projectile-bookmarks.eld
+recentf
