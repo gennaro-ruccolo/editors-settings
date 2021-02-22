@@ -27,4 +27,4 @@ there's a region, all lines that region covers will be duplicated."
                      (time-subtract after-init-time before-init-time)))
            gcs-done))
 
-(add-hook 'emacs-startup-hook #'gr/display-startup-time)
+;(add-hook 'emacs-startup-hook #'gr/display-startup-time)

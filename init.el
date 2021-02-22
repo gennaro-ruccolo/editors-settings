@@ -112,6 +112,16 @@
   (global-set-key (kbd "C-S-z") 'redo)
 )
 
+(use-package dashboard
+  :ensure t
+  :config
+    (dashboard-setup-startup-hook)
+    (setq dashboard-startup-banner "~/.emacs.d/imgs/dashLogo.png")
+    (setq dashboard-items '((recents  . 5)
+                            (projects . 5)))
+    (setq dashboard-banner-logo-title ""))
+
+
 (use-package company
   :config
   (global-company-mode t)
@@ -162,13 +172,15 @@
   (ivy-prescient-mode 1)
 )
 
-(use-package zenburn-theme)
-
 (use-package all-the-icons)
 
 (use-package doom-modeline
   :init (doom-modeline-mode 1)
   :custom ((doom-modeline-height 10)))
+
+(use-package doom-themes
+  :init (load-theme 'doom-zenburn t))
+
 
 (defun gr/lsp-mode-setup ()
   (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
