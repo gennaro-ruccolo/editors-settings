@@ -82,6 +82,10 @@
 
 (use-package better-defaults)
 
+(use-package which-key
+  :init
+  (which-key-mode))
+
 (use-package ace-window
   :diminish
   :config
@@ -111,6 +115,7 @@
 (use-package company
   :config
   (global-company-mode t)
+  ;(setq company-global-modes '(not markdown-mode dired-mode)) ;except for the modes in list
 )
 
 (use-package ivy
