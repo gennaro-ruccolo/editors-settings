@@ -119,7 +119,8 @@
     (setq dashboard-startup-banner "~/.emacs.d/imgs/dashLogo.png")
     (setq dashboard-items '((recents  . 5)
                             (projects . 5)))
-    (setq dashboard-banner-logo-title ""))
+    (setq dashboard-banner-logo-title "")
+)
 
 
 (use-package company
@@ -127,6 +128,13 @@
   (global-company-mode t)
   ;(setq company-global-modes '(not markdown-mode dired-mode)) ;except for the modes in list
 )
+
+(use-package yasnippet-snippets
+  :after company
+  :config
+  (yas-global-mode 1)
+)
+
 
 (use-package ivy
   :diminish
