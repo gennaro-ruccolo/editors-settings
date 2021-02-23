@@ -187,7 +187,7 @@
   :custom ((doom-modeline-height 10)))
 
 (use-package doom-themes
-  :init (load-theme 'doom-vibrant t))
+  :init (load-theme 'doom-miramare t))
 
 
 (defun gr/lsp-mode-setup ()
