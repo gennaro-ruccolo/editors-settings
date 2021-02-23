@@ -4,7 +4,7 @@
 (setq gc-cons-threshold (* 50 1000 1000))
 
 ; Make frame transparency overridable
-(defvar gr/frame-transparency '(95 . 95))
+(defvar gr/frame-transparency '(97 . 97))
 (defvar gr/font-size 101)
 
 
@@ -187,7 +187,7 @@
   :custom ((doom-modeline-height 10)))
 
 (use-package doom-themes
-  :init (load-theme 'doom-zenburn t))
+  :init (load-theme 'doom-vibrant t))
 
 
 (defun gr/lsp-mode-setup ()
