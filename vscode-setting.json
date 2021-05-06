@@ -1,0 +1,88 @@
+{
+    "debug.allowBreakpointsEverywhere": true,
+    "editor.columnSelection": false,
+    "editor.cursorWidth": 3,
+    "editor.formatOnSave": true,
+    "editor.fontFamily": "'Fira Code Light'",
+    "editor.fontLigatures": true,
+    "editor.fontSize": 13,
+    //"editor.fontWeight": "100",
+    "editor.lineHeight": 22,
+    "editor.minimap.enabled": false,
+    "editor.suggestSelection": "first",
+    "explorer.confirmDelete": false,
+    "explorer.openEditors.visible": 0,
+    "explorer.compactFolders": false,
+    "files.autoSave": "onFocusChange",
+    "files.autoSaveDelay": 750,
+    "git.enableSmartCommit": true,
+    "git.autofetch": true,
+    "git.confirmSync": false,
+    // golang
+    "go.useLanguageServer": true,
+    // python
+    "python.languageServer": "Pylance",
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": true,
+    "python.formatting.autopep8Args": [
+        "--ignore",
+        "E402"
+    ],
+    "workbench.colorCustomizations": {
+        "statusBar.background": "#1e1e1e",
+        "statusBar.foreground": "#a1a1cd",
+        "sideBar.background": "#1e1e1e",
+        "activityBar.background": "#1e1e1e",
+        "editorRuler.foreground": "#727272",
+        "editorCursor.background": "#ffa500",
+        "editorCursor.foreground": "#ffa500",
+    },
+    "terminal.integrated.shell.windows": "C:\\Program Files\\Git\\bin\\bash.exe",
+    "terminal.integrated.fontSize": 13,
+    "update.mode": "manual",
+    "workbench.startupEditor": "newUntitledFile",
+    "workbench.iconTheme": "vscode-icons",
+    //
+    // language specific settings
+    "[go]": {
+        "editor.insertSpaces": false,
+        "editor.tabSize": 4
+    },
+    "[javascript]": {
+        "editor.tabSize": 2,
+        "editor.codeActionsOnSave": {
+            "source.fixAll": true
+        },
+    },
+    "[python]": {
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": false,
+            "source.fixAll": true
+        },
+        // "editor.rulers": [
+        //     79
+        // ],
+    },
+    "[rust]": {},
+    //
+    //  plugins sections
+    //
+    //  date & time
+    "dateTime.showDayOfMonth": true,
+    "dateTime.showMonth": true,
+    // python & jupyter
+    "workbench.editorAssociations": [
+        {
+            "viewType": "jupyter.notebook.ipynb",
+            "filenamePattern": "*.ipynb"
+        }
+    ],
+    // julia
+    //"julia.enableTelemetry": true,
+    //"julia.execution.resultType": "both",
+    // "terminal.integrated.commandsToSkipShell": [
+    //     "language-julia.interrupt"
+    // ],
+    // rust-analyzer
+    // "rust-analyzer.serverPath": "rust-analyzer",
+}
