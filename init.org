@@ -1,0 +1,301 @@
+#+title: File di configurazione (org format)
+#+author: Gennaro Ruccolo
+#+date: 2023-08-24
+
+* Configurazione di emacs
+
+Per il caricamento del file è necessario partire da una installazione pulita e digitare il comando ~org-babel-load-file~
+Ricordarsi poi di eliminare il file .emacs che viene creato altrimenti non viene caricato il file init.el
+
+todo: creare la versione compilata del file /init.elc/ per incrementare la velocità di caricamento.
+
+
+
+** Performance
+Velocizza il caricamento di emacs
+#+begin_src emacs-lisp
+  (setq gc-cons-threshold most-positive-fixnum)
+#+end_src
+
+** Impostazioni di codifica
+#+begin_src emacs-lisp
+  (set-language-environment "UTF-8") 
+#+end_src
+
+** Configurazione di base 
+#+begin_src emacs-lisp
+  (setq frame-title-format '("%f")) ; set title format for the frame
+  (setq inhibit-startup-message t)
+  (setq visible-bell t)
+  (setq initial-scratch-message "") ; clean the scratch message
+  (setq-default cursor-type 'bar)   ; make the cursor a vertical bar
+  (setq display-time-default-load-average nil) ; display time in the modeline
+  (setq display-time-format "%a %d %b %Y %H:%M")
+  (display-time-mode 1)             
+
+  (setq make-backup-files nil)      ; disable backup
+  (setq auto-save-default nil)      ; disable autosave
+
+  (cua-mode 1)                      ; enable common shortcut Ctrl-X, Crtl-C(cua-mode 1)
+  (delete-selection-mode 1)         ; override current selection
+
+  (scroll-bar-mode -1)              ; disable ui elements (già compresi nel packege better-defaults)
+  (tool-bar-mode -1)          
+  (menu-bar-mode -1)          
+  (tooltip-mode -1)           
+
+  (set-fringe-mode 10)              ; add vertical margin
+
+  (set-face-attribute 'default nil :family "Fira Code" :height gr/font-size) ; font for the frame
+
+  (fset 'yes-or-no-p 'y-or-n-p)     ; change yes-or-no to y-n
+
+  (column-number-mode)              ; abilita i numeri di colonna
+
+  (global-display-line-numbers-mode t)        ; abilita i numeri di riga
+  (dolist (mode '(org-mode-hook               ; disabilita i numeri di riga per le sottoelencate modalità
+                  term-mode-hook
+                  shell-mode-hook
+                  treemacs-mode-hook
+                  eshell-mode-hook
+                  vterm-mode-hook
+                  compilation-mode-hook
+                  telega-root-mode-hook
+                  telega-chat-mode-hook
+                  erc-mode-hook))
+    (add-hook mode (lambda () (display-line-numbers-mode 0))))
+
+  (electric-pair-mode 1) ; aggiunge double-quote, curly brackets, backtick 
+  (setq electric-pair-pairs
+        '(
+          (?\" . ?\")
+          (?\{ . ?\})
+          (?\` . ?\`)
+         )
+  )
+
+  (global-set-key (kbd "<escape>") 'keyboard-escape-quit) ; abilita il tasto Escape
+
+  ;; set frame transparency
+  (set-frame-parameter (selected-frame) 'alpha gr/frame-transparency)
+  (add-to-list 'default-frame-alist `(alpha . ,gr/frame-transparency))
+  (set-frame-parameter (selected-frame) 'fullscreen 'maximized)
+  (add-to-list 'default-frame-alist '(fullscreen . maximized))
+
+#+end_src
+
+** Variabili custom
+#+begin_src emacs-lisp
+
+  (defvar gr/frame-transparency '(100 . 100))   
+  (defvar gr/font-size 102)                     
+#+end_src
+
+** Load file
+Caricamento di file contenenti configurazioni esterne o funzioni utilizzate
+#+begin_src emacs-lisp
+  (load "~/.emacs.d/elisp/functions")
+#+end_src
+
+** Package repositories
+#+begin_src emacs-lisp
+
+  (require 'package)
+  (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3") ; bugfix: it's not necessary for emacs >= 26.3 
+  (setq package-archives '(("melpa" . "https://melpa.org/packages/")
+                           ("org" . "https://orgmode.org/elpa/")
+                           ("elpa" . "https://elpa.gnu.org/packages/")))
+
+  (package-initialize)
+
+  (unless package-archive-contents
+    (package-refresh-contents))
+
+  ; Initialize use-package on non-Linux platforms
+  (unless (package-installed-p 'use-package)
+    (package-install 'use-package))
+
+  (require 'use-package)
+  (setq use-package-always-ensure t) ; garantisce il dowload del pacchetto prima di tentare il caricamento
+
+#+end_src
+
+** Configurazione principali pacchetti
+#+begin_src emacs-lisp
+  (use-package better-defaults)
+
+(use-package which-key
+  :init
+  (which-key-mode))
+
+(use-package ace-window
+  :diminish
+  :config
+  (global-set-key (kbd "M-o") 'ace-window))
+
+(use-package drag-stuff
+  :config
+  (drag-stuff-global-mode 1) ; enable drag-staff globally
+  (drag-stuff-define-keys)   ; default key bindings 
+  )
+
+(use-package undo-tree
+  :config
+  (global-undo-tree-mode 1)      ; undo-tree
+  (global-set-key (kbd "C-z") 'undo)
+  (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo"))) ; tutti i files undo-tree all' interno di una unica directory
+  (defalias 'redo 'undo-tree-redo)
+  (global-set-key (kbd "C-S-z") 'redo)
+)
+
+(use-package dashboard
+  :config
+  (setq dashboard-items '((recents  . 5)
+                          (projects . 5)))
+  (setq dashboard-banner-logo-title "")
+  (dashboard-setup-startup-hook))
+
+
+(use-package company ; pacchetto per l'autocomplete
+  :config
+  (global-company-mode t)
+  (setq company-global-modes '(not markdown-mode dired-mode)) ;except for the modes in list
+)
+
+;; ivy è una interfaccia di completamento per emacs
+(use-package ivy
+  :diminish
+  :bind (("C-s" . swiper)
+         :map ivy-minibuffer-map
+         ("TAB" . ivy-alt-done)
+         ("C-l" . ivy-alt-done)
+         ("C-j" . ivy-next-line)
+         ("C-k" . ivy-previous-line)
+         :map ivy-switch-buffer-map
+         ("C-k" . ivy-previous-line)
+         ("C-l" . ivy-done)
+         ("C-d" . ivy-switch-buffer-kill)
+         :map ivy-reverse-i-search-map
+         ("C-k" . ivy-previous-line)
+         ("C-d" . ivy-reverse-i-search-kill))
+  :config
+  (ivy-mode 1))
+
+(use-package counsel
+  :bind (("C-M-j" . 'counsel-switch-buffer)
+         :map minibuffer-local-map
+         ("C-r" . 'counsel-minibuffer-history))
+  :custom
+  (counsel-linux-app-format-function #'counsel-linux-app-format-function-name-only)
+  :config
+  (counsel-mode 1)
+)
+
+
+;; fornisce una interfaccia per prescient.el
+;; per ordinare e filtrare gli elementi candidati nel menù di Ivy
+(use-package ivy-prescient
+  :after counsel
+  :custom
+  (ivy-prescient-enable-filtering nil)
+  :config
+  ; Uncomment the following line to have sorting remembered across sessions!
+  (prescient-persist-mode 1)
+  (ivy-prescient-mode 1)
+)
+
+;; interfaccia friendly per ivy
+(use-package ivy-rich
+  :config
+  (ivy-rich-mode 1)
+)
+
+;; nerd sections
+;; vari pacchetti per migliorare la visualizzazione dell'interfaccia
+(use-package nerd-icons
+  :custom
+  (nerd-icons-font-family "Symbols Nerd Font Mono")
+)
+
+(use-package nerd-icons-dired
+  :requires(nerd-icons)
+  :hook
+  (dired-mode . nerd-icons-dired-mode))
+
+(use-package nerd-icons-ivy-rich
+  :init
+  (nerd-icons-ivy-rich-mode 1)
+  (ivy-rich-mode 1))
+
+(use-package nerd-icons-completion
+  :config
+  (nerd-icons-completion-mode))
+
+(use-package nerd-icons-ibuffer
+  :hook (ibuffer-mode . nerd-icons-ibuffer-mode))
+
+
+;; doom section
+(use-package doom-modeline
+  :init (doom-modeline-mode 1)
+  :custom ((doom-modeline-height 10)))
+
+(use-package doom-themes
+  :init (load-theme 'doom-miramare t))
+
+(use-package projectile
+  :diminish projectile-mode
+  :config (projectile-mode)
+  :custom ((projectile-completion-system 'ivy))
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
+)
+
+(use-package magit
+  :commands magit-status
+  :custom
+  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
+)
+
+#+end_src
+
+** Caricamento di altri pacchetti (development)
+#+begin_src
+  (use-package yasnippet
+  :hook
+  (prog-mode . yas-minor-mode)
+  :bind
+  (("C-c y n" . yas-new-snippet)
+   ("C-c y v" . yas-visit-snippet-file)
+   ("C-c y i" . yas-insert-snippet))
+  :config
+  (yas-reload-all)
+  (setq yas-snippet-dirs
+        '("~/.emacs.d/snippets")))
+
+
+;; auto enable treesitter for python
+(setq major-mode-remap-alist
+      '((python-mode . python-ts-mode)))
+    
+
+;; manage virtual environment
+(use-package pyvenv
+  :config
+  (pyvenv-mode t)
+
+  ;; Set correct Python interpreter
+  (setq pyvenv-post-activate-hooks
+        (list (lambda ()
+                (setq python-shell-interpreter (concat pyvenv-virtual-env "Scripts/python")))))
+  (setq pyvenv-post-deactivate-hooks
+        (list (lambda ()
+                (setq python-shell-interpreter "python"))))
+)
+
+#+end_src
+
+** Caricamento del file per lo spelling
+#+begin_src emacs-lisp
+  (load "~/.emacs.d/elisp/spell-config")
+#+end_src
